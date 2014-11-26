@@ -5,7 +5,7 @@ Files (file with * can run directly, check the usage by running the python files
    ./helper_common.py general helper functions for both 2D points and DNA strings.
    ./kMeans_prl.py* mpi kMeans program.
    ./kMeans_seq.py* sequential kMeans program.
-   ./plotClusteredPoints.py* helper functions to plot 2D points cluster.
+   ./plotClusteredPoints.py* helper functions to plot 2D points cluster results.
    ./test_script.sh* script for a overall test run. Will generate all output files.
 
 Running test:
@@ -18,7 +18,7 @@ Sample commands:
    python generaterawdata.py -c 5 -p 300 -o points.txt
    python kMeans_seq.py -c 5 -i points.txt -o resultPoints.txt -r 100 -p
    mpirun -np 4 python kMeans_prl.py -c 5 -i points.txt -o resultPoints.txt -r 100 -p
-   python plotClusteredPoints.py -i resultPoints.txt
+   python plotClusteredPoints.py -i resultPoints.txt -o points.png
 
    python generaterawdata_dna.py -c 5 -p 300 -l 10 -o strands.txt
    python kMeans_seq.py -c 5 -i strands.txt -o resultStrands.txt -r 100 -d 
