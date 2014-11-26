@@ -1,9 +1,25 @@
-Files:
-   ./
-   ./run.sh script for unit test.
-   ./test_script.sh script for a overall test run. Will generate all output files.
+Files (file with * can run directly, check the usage by running the python files):
+   ./generaterawdata.py* generate 2D points data.
+   ./generaterawdata_dna.py* generate DNA strings data.
+   ./helper_classifier.py helper functions to deal with distance and centroids.
+   ./helper_common.py general helper functions for both 2D points and DNA strings.
+   ./kMeans_prl.py* mpi kMeans program.
+   ./kMeans_seq.py* sequential kMeans program.
+   ./plotClusteredPoints.py* helper functions to plot 2D points cluster.
+   ./test_script.sh* script for a overall test run. Will generate all output files.
 
 Running test:
-   # Make sure all hosts listed in test_script.sh(SERVER_LIST) is reachable. 
-   chmod a+x test_script.sh
-   ./test_script.sh
+   # make will run test_script.sh to generate all result. (classify result, time consumption records under different configurations)
+   # for example, "resultDnas-mpi-n1000-c8-l32-p2.txt" means mpi run for DNA classifier with 1000 node and 8 classes. The DNA string length is 32 and 2 processors is used in mpi.
+   # Note that "time-*" is the time consumption recorded using shell command "time". And the "inner-*" is the time consumption recorded using python inside the program.
+   ./make
+
+Sample commands:
+   python generaterawdata.py -c 5 -p 300 -o points.txt
+   python kMeans_seq.py -c 5 -i points.txt -o resultPoints.txt -r 100 -p
+   mpirun -np 4 python kMeans_prl.py -c 5 -i points.txt -o resultPoints.txt -r 100 -p
+   python plotClusteredPoints.py -i resultPoints.txt
+
+   python generaterawdata_dna.py -c 5 -p 300 -l 10 -o strands.txt
+   python kMeans_seq.py -c 5 -i strands.txt -o resultStrands.txt -r 100 -d 
+   mpirun -np 4 python kMeans_prl.py -c 5 -i strands.txt -o resultStrands.txt -r 100 -d 
