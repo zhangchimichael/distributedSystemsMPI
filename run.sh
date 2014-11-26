@@ -6,6 +6,7 @@ python plotClusteredPoints.py -i resultPoints.txt
 python generaterawdata_dna.py -c 5 -p 300 -l 10 -o strands.txt
 python kMeans_seq.py -c 5 -i strands.txt -o resultStrands.txt -r 100 -d 
 mpirun -np 4 python kMeans_prl.py -c 5 -i strands.txt -o resultStrands.txt -r 100 -d 
+mpirun -np 1 python kMeans_prl.py -c 5 -i strands.txt -o resultStrands.txt -r 100 -d 
 
 
 
