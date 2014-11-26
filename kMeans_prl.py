@@ -10,7 +10,6 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 name = MPI.Get_processor_name()
 num_nodes = comm.size
-num_participants = num_nodes - 1
 status = MPI.Status()
     
 # start by reading the command line
@@ -22,6 +21,10 @@ dataType = handleArgs(sys.argv)
 
 #all nodes read input
 points = readinput(input, dataType)
+
+#each node, work or master, only handlers its own chunk of data
+chunkSize = len(points)/num_nodes + 1
+chunk = points[rank*chunkSize:(rank+1)*chunkSize]
 
 #initialize
 if dataType == 'points':
@@ -41,8 +44,12 @@ if rank == 0: #master
         #broadcast updated centroid list
         for i in range(1, num_nodes):
             comm.send(centroids, dest=i)
-        # receive stats from worker nodes
-        stats = []
+        #initialize a new classfier, classify to gather statistic for its chunk
+        classifier = Classifier(numClusters)
+        for point in chunk:
+            classifier.classify(point, centroids)
+        stats = [classifier.getStat()]
+        # receive stats from other worker nodes
         for i in range (1, num_nodes):
             stats.append(comm.recv(source=i, tag=MPI.ANY_TAG, status=status))
         #update centroids using collected worker stats
@@ -56,18 +63,15 @@ if rank == 0: #master
     #output
     writeoutput(output, points, centroids, Classifier(numClusters))
 else: #worker
-    #each worker only handlers its own chunk of data
-    chunkSize = len(points)/num_participants + 1
-    points = points[(rank-1)*chunkSize:rank*chunkSize]
     while True:
         #receive new centroids from master
         centroids = comm.recv(source=0, tag=MPI.ANY_TAG, status=status)
         #if centroids are empty, break. job done.
         if len(centroids)==0:
             break
-        #initialize a new classfier, classify to gather statistic
+        #initialize a new classfier, classify to gather statistic for its chunk
         classifier = Classifier(numClusters)
-        for point in points:
+        for point in chunk:
             classifier.classify(point, centroids)
         #send stat of this classifier to master
         comm.send(classifier.getStat(), dest=0)
