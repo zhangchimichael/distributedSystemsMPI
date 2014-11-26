@@ -2,6 +2,7 @@ import math
 import random
 from helper_classifier import *
 from helper_common import *
+import datetime
         
 # start by reading the command line
 numClusters, \
@@ -25,6 +26,8 @@ else:
     Classifier = DNAClassifier
     updateCentroids = updateCentroidsDNA
 
+#start timing    
+t1 = datetime.datetime.now()
 #k means
 for i in range(iterations):
     classifier = Classifier(numClusters)
@@ -32,5 +35,8 @@ for i in range(iterations):
         classifier.classify(point, centroids)
     centroids = updateCentroids([classifier.getStat()],numClusters)
 
+#print timing
+t2 = datetime.datetime.now()
+print (t2-t1).total_seconds()
 #output
 writeoutput(output, points, centroids, classifier)

@@ -3,6 +3,7 @@ import random
 from helper_classifier import *
 from helper_common import *
 from mpi4py import MPI
+import datetime
     
 #mpi start
 comm = MPI.COMM_WORLD
@@ -32,6 +33,8 @@ else:
     updateCentroids = updateCentroidsDNA
 
 if rank == 0: #master   
+    #start timing    
+    t1 = datetime.datetime.now()
     for iteration in range(iterations):
         #get initial centroids
         centroids = getInitialCentroids(points,numClusters)
@@ -47,6 +50,9 @@ if rank == 0: #master
     #send empty centroids to workers, as a signal to break
     for i in range (1, num_nodes):
         comm.send([], dest=i)
+    #print timing
+    t2 = datetime.datetime.now()
+    print (t2-t1).total_seconds()
     #output
     writeoutput(output, points, centroids, Classifier(numClusters))
 else: #worker
