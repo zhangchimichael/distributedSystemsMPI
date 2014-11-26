@@ -1,0 +1,9 @@
+Files:
+   ./
+   ./run.sh script for unit test.
+   ./test_script.sh script for a overall test run. Will generate all output files.
+
+Running test:
+   # Make sure all hosts listed in test_script.sh(SERVER_LIST) is reachable. 
+   chmod a+x test_script.sh
+   ./test_script.sh
