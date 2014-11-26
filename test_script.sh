@@ -1,9 +1,9 @@
-DATA_SIZE="100 200 500 1000 2000"
+DATA_SIZE="100 200 500"
 CLUSTER_NUM="4 8"
-DNA_LEN="8 32 64"
-PROCESS_NUM="1 2 4 6 8 10 12"
-ITERATION=300
-SERVER_LIST="ghc68.ghc.andrew.cmu.edu,ghc69.ghc.andrew.cmu.edu,ghc70.ghc.andrew.cmu.edu"
+DNA_LEN="8 16 32"
+PROCESS_NUM="2 4 8 12"
+ITERATION=100
+SERVER_LIST="ghc68,ghc69,ghc70"
 
 echo 'generate data'
 for dSize in $DATA_SIZE
@@ -41,14 +41,23 @@ for dSize in $DATA_SIZE
    for cSize in $CLUSTER_NUM
       do
       # analysis point data
+
+      echo resultPoints-mpi-n$dSize-c$cSize-singleHost.txt...
+      { time mpirun -np 4 python kMeans_prl.py -c $cSize -i points-n$dSize-c$cSize.txt -o resultPoints-mpi-n$dSize-c$cSize-singleHost.txt -r $ITERATION -p;} 2> time-resultPoints-mpi-n$dSize-c$cSize-singleHost.txt 1> inner-resultPoints-mpi-n$dSize-c$cSize-singleHost.txt
+      for dnaLen in $DNA_LEN
+      do
+         echo resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-singleHost.txt...
+         { time mpirun -np 4 python kMeans_prl.py -c $cSize -i dnas-n$dSize-c$cSize-l$dnaLen.txt -o resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-singleHost.txt -r $ITERATION -d;} 2> time-resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-singleHost.txt 1> inner-resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-singleHost.txt
+      done
+
       for pNum in $PROCESS_NUM
          do
          echo resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt...
-         { time mpirun -np $pNum python kMeans_prl.py -c $cSize -i points-n$dSize-c$cSize.txt -o resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt -r $ITERATION -p;} 2> time-resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt 1> inner-resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt
+         { time mpirun -np $pNum -host $SERVER_LIST python kMeans_prl.py -c $cSize -i points-n$dSize-c$cSize.txt -o resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt -r $ITERATION -p;} 2> time-resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt 1> inner-resultPoints-mpi-n$dSize-c$cSize-p$pNum.txt
          for dnaLen in $DNA_LEN
          do
             echo resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt...
-            { time mpirun -np $pNum python kMeans_prl.py -c $cSize -i dnas-n$dSize-c$cSize-l$dnaLen.txt -o resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt -r $ITERATION -d;} 2> time-resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt 1> inner-resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt
+            { time mpirun -np $pNum -host $SERVER_LIST python kMeans_prl.py -c $cSize -i dnas-n$dSize-c$cSize-l$dnaLen.txt -o resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt -r $ITERATION -d;} 2> time-resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt 1> inner-resultDnas-mpi-n$dSize-c$cSize-l$dnaLen-p$pNum.txt
          done
       done
    done
