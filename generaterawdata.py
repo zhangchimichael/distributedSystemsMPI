@@ -11,9 +11,6 @@ def usage():
         '\t-o <file>\tFilename for the output of the raw data\n' + \
         '\t-v [#]\t\tMaximum coordinate value for points\n'  
 
-       
-       
-
 def euclideanDistance(p1, p2):
     '''
     Takes two 2-D points and computes the Euclidean distance between them.
@@ -68,6 +65,7 @@ def handleArgs(args):
     return (numClusters, numPoints, output, \
             maxValue)
 
+# create centroids
 def drawOrigin(maxValue):
     return numpy.random.uniform(0, maxValue, 2)
 
@@ -76,7 +74,6 @@ numClusters, \
 numPoints, \
 output, \
 maxValue = handleArgs(sys.argv)
-
 
 writer = csv.writer(open(output, "w"))
 

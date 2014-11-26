@@ -1,6 +1,6 @@
 import math
 
-#module points    
+#for points supporting  
 def updateCentroidsPoint(stats, numClusters):
     xTotal = [0 for _ in range(numClusters)]
     yTotal = [0 for _ in range(numClusters)]
@@ -19,10 +19,12 @@ class PointsClassifier:
         self.xTotal = [0 for _ in range(numClusters)]
         self.yTotal = [0 for _ in range(numClusters)]
         self.clusterCount = [0 for _ in range(numClusters)]
+    # get distance
     def euc(self, point1, point2):
         x1, y1 = point1
         x2, y2 = point2
         return math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
+    # set point to the nearest centroids and return the new centroids updates
     def classify(self, point, centroids):
         clusterIndex = reduce(lambda a, b: a if a[1]<b[1] else b,
             [(idx, self.euc(cent, point)) for idx, cent in enumerate(centroids)])[0]
@@ -34,12 +36,12 @@ class PointsClassifier:
         return (self.xTotal, self.yTotal, self.clusterCount)
 
 
-#module dna
+#for dna supporting  
 strandLength = None
 def setStrandLength(length):
     global strandLength
     strandLength = length
-    
+
 def updateCentroidsDNA(stats, numClusters):
     global strandLength
     #3-dim array. [agct count] * strandLength * numClusters
@@ -58,15 +60,16 @@ def updateCentroidsDNA(stats, numClusters):
                             [(k, cnt) for k, cnt in enumerate(clusterCount[i][j])])[0]]
     return [''.join(dna[i]) for i in range(numClusters)]
 
-    
 class DNAClassifier:
     def __init__(self,numClusters): 
         global strandLength
         #3-dim array. [agct count] * strandLength * numClusters
         self.clusterCount = [[[0,0,0,0] for _ in range(strandLength)] for _ in range(numClusters)]
         self.dnaIndex = {'A': 0, 'G': 1, 'C': 2, 'T': 3}
+    # get distance
     def hamming(self, point1, point2):
         return sum([0 if point1[i]==point2[i] else 1 for i in range(len(point1))])
+    # set dnas to the nearest centroids and return the new centroids updates 
     def classify(self, dna, centroids):
         clusterIndex = reduce(lambda a, b: a if a[1]<b[1] else b,
             [(idx, self.hamming(cent, dna)) for idx, cent in enumerate(centroids)])[0]

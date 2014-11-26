@@ -55,9 +55,11 @@ def handleArgs(args):
         sys.exit()
     return (numClusters, numPoints, output, strandLength)
 
+# create centroids
 def drawOrigin(strandLength):
     return ''.join([random.choice('AGCT') for _ in range(strandLength)])
 
+# create variant dna strings
 def variant(num_changes, string):
     changeList = {'A': 'GCT', 'C': 'AGT', 'T': 'AGC', 'G': 'ACT'}
     #make changes num_changes times. it's possible after changes it is same with original string
@@ -74,7 +76,6 @@ numPoints, \
 output, \
 strandLength = handleArgs(sys.argv)
 minDistance = strandLength/2
-
 
 # step 1: generate each centroid
 centroids_radii = []
